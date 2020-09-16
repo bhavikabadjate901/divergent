@@ -50,10 +50,19 @@ class Officer_Regi(APIView):
             officer = Officer_Registration(offiserName = offiserName, policeId = policeId, rank = rank, retiredDate = retiredDate, dateOfHier = dateOfHier, policeStation = policeStation, pincode = pincode, state = state, country = country, district = district, dateOfBirth = dateOfBirth, gender = gender,emailId = emailId, password = password , confirmPassword = confirmPassword)
             # try:
             officer.save()
-            response = json.dumps([{'Success':'Added'}])
-            #except:    
-            response = json.dumps([{'Error':'Error! Not added'}])
-        return HttpResponse(response, content_type='text/json')
+            username = serializer.data.get('offiserName')
+            password = serializer.data.get('password')
+            email = serializer.data.get('emailId')
+            subject = "Registartion Sucessful Mail"
+            massage = f"Hello officer, Your registartion to our portal is sucessfully done. Username: {username} and Password : {password}"
+            # print(massage)
+            send_mail(subject, massage, settings.EMAIL_HOST_USER,[email],fail_silently=False)
+
+            return Response("Registration Sucessfull", status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 class OfficerAllProfile(APIView):
