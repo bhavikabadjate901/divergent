@@ -26,6 +26,7 @@ from rest_framework import status
 
 
 class User_Regi(APIView):
+    
     @csrf_exempt
     def post(self,request, format=None):
         if request.method == 'POST':
@@ -50,18 +51,12 @@ class User_Regi(APIView):
                 confirmPassword=confirmPassword,state=state,pincode=pincode,district=district,country=country,gender=gender,
                 dateOfBirth=dateOfBirth,aadharNo=aadharNo)
             #try:
-            user.save()
-            username = serializer.data.get('name')
-            password = serializer.data.get('password')
-            email = serializer.data.get('emailId')
-            subject = "Registartion Sucessful Mail"
-            massage = f"Hello user, Your registartion to our portal is sucessfully done. Username: {username} and Password : {password}"
-            # print(massage)
-            send_mail(subject, massage, settings.EMAIL_HOST_USER,[email],fail_silently=False)
-
-            return Response("Registration Sucessfull", status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                user.save()
+                response = json.dumps([{'Success':'Added'}])
+            else:
+            #except:    
+                response = json.dumps([{'Error':'Error! Not added'}])
+        return HttpResponse(response, content_type='text/json')
 
 
 class UserAllProfile(APIView):

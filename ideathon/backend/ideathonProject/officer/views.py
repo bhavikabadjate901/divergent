@@ -25,13 +25,19 @@ from rest_framework import status
 
 
 class Officer_Regi(APIView):
+    def get(self, request, format=None):
+        qs = Officer_Registration.objects.all()
+        serializer = OfficerSerializer(qs,many = True)  #qs to dict
+        return Response(serializer.data)
+
+
     @csrf_exempt
     def post(self,request, format=None):
         if request.method == 'POST':
             
             payload =json.loads(request.body)
             print(payload)
-            offiserName = payload['offiserName']
+            officerName = payload['officerName']
             policeId = payload['policeId']
             rank = payload['rank']
             retiredDate = payload['retiredDate']
@@ -46,23 +52,17 @@ class Officer_Regi(APIView):
             emailId = payload['emailId']
             password = payload['password']
             confirmPassword = payload['confirmPassword']
-            Role = payload['Role']
-            officer = Officer_Registration(offiserName = offiserName, policeId = policeId, rank = rank, retiredDate = retiredDate, dateOfHier = dateOfHier, policeStation = policeStation, pincode = pincode, state = state, country = country, district = district, dateOfBirth = dateOfBirth, gender = gender,emailId = emailId, password = password , confirmPassword = confirmPassword)
-            # try:
-            officer.save()
-            username = serializer.data.get('offiserName')
-            password = serializer.data.get('password')
-            email = serializer.data.get('emailId')
-            subject = "Registartion Sucessful Mail"
-            massage = f"Hello officer, Your registartion to our portal is sucessfully done. Username: {username} and Password : {password}"
-            # print(massage)
-            send_mail(subject, massage, settings.EMAIL_HOST_USER,[email],fail_silently=False)
+            
 
-            return Response("Registration Sucessfull", status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
+            if password == confirmPassword:
+                officer = Officer_Registration(officerName = officerName, policeId = policeId, rank = rank, retiredDate = retiredDate, dateOfHier = dateOfHier, policeStation = policeStation, pincode = pincode, state = state, country = country, district = district, dateOfBirth = dateOfBirth, gender = gender,emailId = emailId, password = password , confirmPassword = confirmPassword)
+            #try:
+                officer.save()
+                response = json.dumps([{'Success':'Added'}])
+            else:
+            #except:    
+                response = json.dumps([{'Error':'Error! Not added'}])
+        return HttpResponse(response, content_type='text/json')
 
 
 class OfficerAllProfile(APIView):

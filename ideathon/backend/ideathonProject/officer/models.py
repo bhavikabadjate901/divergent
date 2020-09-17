@@ -8,7 +8,7 @@ class Officer_Registration(models.Model):
     retiredDate = models.DateField()
     dateOfHier = models.DateField()
     policeStation = models.CharField(max_length=100)
-    pincode = models.IntegerField
+    pincode = models.IntegerField()
     state = models.CharField(max_length=40)
     country = models.CharField(max_length=40)
     district = models.CharField(max_length=40)
